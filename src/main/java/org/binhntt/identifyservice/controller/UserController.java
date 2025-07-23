@@ -1,6 +1,8 @@
 package org.binhntt.identifyservice.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.binhntt.identifyservice.dto.request.ApiResponse;
 import org.binhntt.identifyservice.dto.request.UserCreationRequest;
 import org.binhntt.identifyservice.dto.request.UserUpdateRequest;
 import org.binhntt.identifyservice.entity.User;
@@ -16,8 +18,11 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping()
-    User createUser(@RequestBody UserCreationRequest request) {
-        return userService.createUser(request);
+    ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request) {
+        ApiResponse<User> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(userService.createUser(request));
+        
+        return apiResponse;
     }
 
     @GetMapping()

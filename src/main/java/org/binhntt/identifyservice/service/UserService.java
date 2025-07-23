@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.binhntt.identifyservice.dto.request.UserCreationRequest;
 import org.binhntt.identifyservice.dto.request.UserUpdateRequest;
 import org.binhntt.identifyservice.entity.User;
+import org.binhntt.identifyservice.exception.AppException;
+import org.binhntt.identifyservice.exception.ErrorCode;
 import org.binhntt.identifyservice.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +19,17 @@ public class UserService {
     public User createUser(UserCreationRequest request) {
         User user = new User();
 
-        user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setDob(request.getDob());
+        if (userRepository.existsByUsername(request.getUsername()))
+            throw new AppException(ErrorCode.USER_EXISTED);
+        else {
+            user.setUsername(request.getUsername());
+            user.setPassword(request.getPassword());
+            user.setFirstName(request.getFirstName());
+            user.setLastName(request.getLastName());
+            user.setDob(request.getDob());
 
-        return userRepository.save(user);
+            return userRepository.save(user);
+        }
     }
 
     public List<User> getUsers() {
